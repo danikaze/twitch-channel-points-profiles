@@ -27,5 +27,7 @@
     }
   ],
 
-  "permissions": ["https://dashboard.twitch.tv/*"]
+  "permissions": ["https://dashboard.twitch.tv/*"],
+
+  "web_accessible_resources": ["img/*"]
 }

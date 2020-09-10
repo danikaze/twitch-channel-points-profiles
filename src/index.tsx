@@ -1,23 +1,34 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import { App } from '@components/app';
-import { msgLog, msgWarn, msgError, msgTable } from '@utils/logging';
+import { msgLog, msgError } from '@utils/logging';
+import { waitUntil } from './utils/wait-until';
 
-const container = document.createElement('div');
-container.id = PACKAGE_NAME;
-document.body.appendChild(container);
+function getContainer(): HTMLDivElement | undefined {
+  try {
+    const parent = document.querySelector('.resize-detector')!.parentElement!
+      .parentElement!;
+    const container = document.createElement('div');
+    container.id = PACKAGE_NAME;
+    container.className =
+      'tw-align-items-center tw-flex tw-full-height tw-justify-content-end tw-pd-r-1';
+    parent.appendChild(container);
 
-const app = <App />;
-render(app, container);
+    return container;
+  } catch (e) {}
+}
 
-msgLog('Loaded');
-msgWarn('Warn');
-msgError('Error');
-msgTable({
-  // tslint:disable:object-literal-shorthand
-  PACKAGE_NAME: PACKAGE_NAME,
-  PACKAGE_VERSION: PACKAGE_VERSION,
-  COMMIT_HASH: COMMIT_HASH,
-  COMMIT_HASH_SHORT: COMMIT_HASH_SHORT,
-  IS_PRODUCTION: IS_PRODUCTION,
-});
+(async function run() {
+  let container: HTMLDivElement | undefined;
+  try {
+    container = await waitUntil(getContainer);
+  } catch (e) {
+    msgError(`Can't find the container`);
+    return;
+  }
+
+  const app = <App />;
+  render(app, container);
+
+  msgLog('Loaded');
+})();
