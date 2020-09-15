@@ -13,6 +13,7 @@ import {
   ChannelPointReward,
 } from '@src/utils/channel-point-rewards';
 import { ChannelPointsRewards } from './channel-points-rewards';
+import { loadSettings } from '@src/utils/settings';
 
 type PageType = 'channel-point-rewards' | undefined;
 
@@ -56,6 +57,8 @@ function useApp(): AppData {
       childList: true,
       subtree: true,
     });
+
+    loadSettings();
 
     return () => {
       hrefObserver.disconnect();
