@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useContext, useEffect } from 'react';
 import { Portal } from '@material-ui/core';
 import {
   getSettingsRowContainer,
@@ -7,15 +7,22 @@ import {
 import { ChannelPointRewardProfile } from './channel-point-reward-profile';
 import { msgLog } from '@src/utils/logging';
 import { TwitchButton } from './twitch/button';
+import { AppContext, ContextData } from './app-context';
+import {
+  addChanelPointRewardsListener,
+  ChannelPointReward,
+  getActiveRewardIds,
+  removeChanelPointRewardsListener,
+} from '@src/utils/channel-point-rewards';
+
+export interface Props {
+  currentRewards: ChannelPointReward[];
+  rewardsProfiles: ChannelPointsRewardsProfile[];
+}
 
 export interface ChannelPointsRewardsProfile {
   name: string;
   rewardIds: string[];
-}
-
-export interface ChannelPointsRewardsProps {
-  activeRewards: string[];
-  profiles: ChannelPointsRewardsProfile[];
 }
 
 function isProfileActive(
@@ -28,27 +35,53 @@ function isProfileActive(
   );
 }
 
-export const ChannelPointsRewards: FunctionComponent<ChannelPointsRewardsProps> = ({
-  activeRewards,
-  profiles,
-}) => {
-  const parent = document.querySelector('.settings-row')?.parentElement;
-  if (!parent) return null;
-  const container = getSettingsRowContainer();
-  parent.children[0]?.insertAdjacentElement('afterend', container);
+export const ChannelPointsRewards: FunctionComponent<Props> = (props) => {
+  const { dispatch } = useContext(AppContext);
 
-  return (
-    <Portal container={container}>
-      <TwitchSettingsRow title="Perfiles" noContainer={true}>
-        {renderDescription()}
-        {renderNewButton()}
-        {renderProfiles(profiles, activeRewards)}
-      </TwitchSettingsRow>
-    </Portal>
-  );
+  useEffect(() => {
+    addChanelPointRewardsListener((rewards) => {
+      dispatch({
+        rewards,
+        type: 'SET_CURRENT_REWARDS',
+      });
+    });
+
+    return removeChanelPointRewardsListener;
+  }, []);
+
+  return <Portal container={getPortalContainer()}>{render(props)}</Portal>;
 };
 
-function renderDescription() {
+function getPortalContainer(): HTMLDivElement | null {
+  const CONTAINER_ID = `${PACKAGE_NAME}-channel-profiles`;
+  let container: HTMLDivElement | null;
+
+  container = document.getElementById(CONTAINER_ID) as HTMLDivElement;
+  if (container) return container;
+
+  const parent = document.querySelector('.settings-row')?.parentElement;
+  if (!parent) return null;
+
+  container = getSettingsRowContainer();
+  container.id = CONTAINER_ID;
+  parent.children[0]?.insertAdjacentElement('afterend', container);
+
+  return container;
+}
+
+function render({ currentRewards, rewardsProfiles }: Props): JSX.Element {
+  const activeRewardIds = getActiveRewardIds(currentRewards);
+
+  return (
+    <TwitchSettingsRow title="Perfiles" noContainer={true}>
+      {renderDescription()}
+      {renderNewButton()}
+      {renderProfiles(rewardsProfiles, activeRewardIds)}
+    </TwitchSettingsRow>
+  );
+}
+
+function renderDescription(): JSX.Element {
   return (
     <p className="tw-mg-b-05">
       Aquí puedes activar grupo de recompensas fácilmente basado en perfiles que
@@ -57,7 +90,7 @@ function renderDescription() {
   );
 }
 
-function renderNewButton() {
+function renderNewButton(): JSX.Element {
   const onClick = () => msgLog('new profile');
 
   return (
@@ -72,7 +105,7 @@ function renderNewButton() {
 function renderProfiles(
   profiles: ChannelPointsRewardsProfile[],
   activeRewardIds: string[]
-) {
+): JSX.Element[] {
   return profiles.map((profile, i) => {
     const onDelete = (name: string) => msgLog(`delete ${name}`);
     const onSelect = (name: string) => msgLog(`select ${name}`);

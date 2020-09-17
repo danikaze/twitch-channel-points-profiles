@@ -8,7 +8,18 @@ export interface Settings {
 
 const defaultSettings: Settings = {
   version: PACKAGE_VERSION,
-  channelPointRewardProfiles: [],
+  channelPointRewardProfiles: [
+    {
+      name: 'Basic',
+      rewardIds: [
+        'SEND_HIGHLIGHTED_MESSAGE',
+        'SINGLE_MESSAGE_BYPASS_SUB_MODE',
+        'CHOSEN_SUB_EMOTE_UNLOCK',
+        'CHOSEN_MODIFIED_SUB_EMOTE_UNLOCK',
+        'RANDOM_SUB_EMOTE_UNLOCK',
+      ],
+    },
+  ],
 };
 
 export async function saveSettings(settings: Settings): Promise<void> {

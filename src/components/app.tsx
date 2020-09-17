@@ -1,46 +1,38 @@
 import React, {
   FunctionComponent,
   useEffect,
-  useState,
   MouseEventHandler,
+  useReducer,
 } from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import { theme } from '@themes/theme';
 import { TwitchDashboardTopButton } from './twitch/dashboard-top-button';
 import { msgLog } from '@src/utils/logging';
-import {
-  getChannelPointRewards,
-  ChannelPointReward,
-} from '@src/utils/channel-point-rewards';
+import { getChannelPointRewards } from '@src/utils/channel-point-rewards';
 import { ChannelPointsRewards } from './channel-points-rewards';
 import { loadSettings } from '@src/utils/settings';
+import { AppContext, ContextData } from './app-context';
+import { detectPage } from '@src/utils/detect-page';
+import { reducer, initialState, Action, State } from '@src/store';
 
-type PageType = 'channel-point-rewards' | undefined;
-
-interface AppData {
-  currentPage: PageType;
-  currentRewards: ChannelPointReward[];
+interface ExtendedAppData extends ContextData {
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 
-function useApp(): AppData {
+function useApp(): ExtendedAppData {
   async function urlChangeHandler() {
-    let page: PageType = undefined;
-    if (/community\/channel-points\/rewards$/.test(location.pathname)) {
-      page = 'channel-point-rewards';
+    const page = detectPage();
+    dispatch({ page, type: 'SET_CURRENT_PAGE' });
+    msgLog('currentPage', page);
+
+    if (page === 'channel-point-rewards') {
       const rewards = await getChannelPointRewards();
-      setCurrentRewards(rewards);
+      dispatch({ rewards, type: 'SET_CURRENT_REWARDS' });
       msgLog('currentRewards', rewards);
     }
-
-    msgLog('currentPage', page);
-    setCurrentPage(page);
   }
 
-  const [currentPage, setCurrentPage] = useState<PageType>();
-  const [currentRewards, setCurrentRewards] = useState<ChannelPointReward[]>(
-    []
-  );
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     let oldhref = '';
@@ -58,7 +50,12 @@ function useApp(): AppData {
       subtree: true,
     });
 
-    loadSettings();
+    loadSettings().then((settings) => {
+      dispatch({
+        type: 'SET_CURRENT_REWARD_PROFILES',
+        profiles: settings.channelPointRewardProfiles,
+      });
+    });
 
     return () => {
       hrefObserver.disconnect();
@@ -66,8 +63,8 @@ function useApp(): AppData {
   }, []);
 
   return {
-    currentPage,
-    currentRewards,
+    state,
+    dispatch,
     onClick: () => {
       msgLog('clicked');
     },
@@ -75,52 +72,24 @@ function useApp(): AppData {
 }
 
 export const App: FunctionComponent = () => {
-  const { onClick, ...appData } = useApp();
-  const contents = getContents(appData);
+  const { onClick, ...contextData } = useApp();
 
   return (
     <ThemeProvider theme={theme}>
-      <TwitchDashboardTopButton onClick={onClick} />
-      {contents}
+      <AppContext.Provider value={contextData}>
+        <TwitchDashboardTopButton onClick={onClick} />
+        <AppContext.Consumer>{getContents}</AppContext.Consumer>
+      </AppContext.Provider>
     </ThemeProvider>
   );
 };
 
-function getContents(data: Omit<AppData, 'onClick'>) {
-  if (data.currentPage === 'channel-point-rewards') {
-    const profiles = [
-      {
-        name: 'Retro',
-        rewardIds: [
-          '¡Hidratación!',
-          'Chat Solo emoticonos',
-          'Sugerir encuesta',
-          'Guiar raid',
-          'Destacar mi mensaje',
-        ],
-      },
-      {
-        name: 'Elite Dangerous',
-        rewardIds: [
-          '¡Hidratación!',
-          'Forzar un FSS Scan',
-          'Chat Solo emoticonos',
-          'Sugerir encuesta',
-          'Súbete a mi nave',
-          'Guiar raid',
-          'Destacar mi mensaje',
-          'Enviar un mensaje en modo Solo suscriptores',
-          'Seleccionar un emoticono para desbloquearlo',
-          'Modificar un emoticono',
-          'Desbloquear un emoticono de suscriptor aleatorio',
-        ],
-      },
-    ];
-
+function getContents({ state }: ContextData) {
+  if (state.currentPage === 'channel-point-rewards') {
     return (
       <ChannelPointsRewards
-        activeRewards={data.currentRewards.map((r) => r.name)}
-        profiles={profiles}
+        currentRewards={state.currentRewards}
+        rewardsProfiles={state.channelPointsRewardsProfiles}
       />
     );
   }

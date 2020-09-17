@@ -47,7 +47,48 @@ function parseChannelPointRewards(): ChannelPointReward[] | undefined {
 export async function setChannelPointRewards(
   rewardNames: string[]
 ): Promise<void> {
-  (await getChannelPointRewards()).forEach(({ name, checkbox }) => {
+  const rewards = parseChannelPointRewards();
+  if (!rewards) return;
+
+  rewards.forEach(({ name, checkbox }) => {
     checkbox.checked = rewardNames.includes(name!);
   });
+}
+
+let lastActiveRewards: string | undefined = undefined;
+let mutationObserver: MutationObserver | undefined;
+
+export async function addChanelPointRewardsListener(
+  onChange: (rewards: ChannelPointReward[]) => void
+): Promise<void> {
+  removeChanelPointRewardsListener();
+  mutationObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (!(mutation.target instanceof HTMLInputElement)) return;
+      const rewards = parseChannelPointRewards();
+      if (!rewards) return;
+
+      const activeRewards = getActiveRewardIds(rewards);
+      const activeRewardsString = activeRewards.join(',');
+
+      if (activeRewardsString === lastActiveRewards) return;
+      onChange(rewards);
+      lastActiveRewards = activeRewardsString;
+    });
+  });
+  mutationObserver!.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+  });
+}
+
+export function removeChanelPointRewardsListener(): void {
+  if (!mutationObserver) return;
+  mutationObserver.disconnect();
+  mutationObserver = undefined;
+}
+
+export function getActiveRewardIds(rewards: ChannelPointReward[]): string[] {
+  return rewards.filter((reward) => reward.enabled).map((reward) => reward.id);
 }
