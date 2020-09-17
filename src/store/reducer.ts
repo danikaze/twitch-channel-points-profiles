@@ -1,4 +1,5 @@
 import { msgLog } from '@src/utils/logging';
+import { saveState } from '@src/utils/settings';
 import { Action } from './actions';
 import { State } from './model';
 
@@ -24,6 +25,48 @@ export function reducer(state: State, action: Action): State {
       ...state,
       channelPointsRewardsProfiles: action.profiles,
     };
+  }
+
+  if (action.type === 'SET_REWARD_PROFILE_NAME') {
+    newState = {
+      ...state,
+      channelPointsRewardsProfiles: [...state.channelPointsRewardsProfiles],
+    };
+    newState.channelPointsRewardsProfiles[action.index].name = action.name;
+  }
+
+  if (action.type === 'SET_REWARD_PROFILE_REWARDS') {
+    newState = {
+      ...state,
+      channelPointsRewardsProfiles: [...state.channelPointsRewardsProfiles],
+    };
+    newState.channelPointsRewardsProfiles[action.index].rewardIds =
+      action.rewardIds;
+
+    saveState(newState);
+  }
+
+  if (action.type === 'REMOVE_REWARD_PROFILE') {
+    newState = {
+      ...state,
+      channelPointsRewardsProfiles: [...state.channelPointsRewardsProfiles],
+    };
+    newState.channelPointsRewardsProfiles.splice(action.index, 1);
+    saveState(newState);
+  }
+
+  if (action.type === 'ADD_REWARD_PROFILE') {
+    newState = {
+      ...state,
+      channelPointsRewardsProfiles: [
+        {
+          name: action.name,
+          rewardIds: action.rewardIds,
+        },
+        ...state.channelPointsRewardsProfiles,
+      ],
+    };
+    saveState(newState);
   }
 
   msgLog(`reducer(${action.type})`, {

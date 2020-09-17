@@ -1,14 +1,14 @@
-import { ChannelPointsRewardsProfile } from '@components/channel-points-rewards';
-import { msgLog } from './logging';
+import { State } from '@src/store';
+import { msgLog, msgWarn } from './logging';
 
-export interface Settings {
+export type StorableState = Pick<State, 'channelPointsRewardsProfiles'>;
+export interface Settings extends StorableState {
   version: string;
-  channelPointRewardProfiles: ChannelPointsRewardsProfile[];
 }
 
 const defaultSettings: Settings = {
   version: PACKAGE_VERSION,
-  channelPointRewardProfiles: [
+  channelPointsRewardsProfiles: [
     {
       name: 'Basic',
       rewardIds: [
@@ -22,23 +22,52 @@ const defaultSettings: Settings = {
   ],
 };
 
-export async function saveSettings(settings: Settings): Promise<void> {
+export async function saveState(state: State): Promise<void> {
+  const settings: Settings = {
+    version: PACKAGE_VERSION,
+    channelPointsRewardsProfiles: state.channelPointsRewardsProfiles,
+  };
+
+  return saveSettings(settings);
+}
+
+export async function loadState(): Promise<
+  Pick<State, 'channelPointsRewardsProfiles'>
+> {
+  const settings = await loadSettings();
+
+  return {
+    channelPointsRewardsProfiles: settings.channelPointsRewardsProfiles,
+  };
+}
+
+async function saveSettings(settings: Settings): Promise<void> {
   return new Promise<void>((resolve) => {
-    chrome.storage.sync.set({ settings }, () => {
+    const strSettings = JSON.stringify(settings);
+    chrome.storage.sync.set({ settings: strSettings }, () => {
       resolve();
       msgLog('Settings stored', settings);
     });
   });
 }
 
-export async function loadSettings(): Promise<Settings> {
+async function loadSettings(): Promise<Settings> {
   return new Promise((resolve) => {
-    chrome.storage.sync.get('settings', async ({ settings }) => {
-      if (settings) {
-        msgLog('Settings loaded', settings);
-        resolve(await upgradeSettings(settings));
-      } else {
-        msgLog('No settings found, using default ones', defaultSettings);
+    chrome.storage.sync.get(['settings'], async ({ settings }) => {
+      try {
+        if (settings) {
+          const json = JSON.parse(settings) as Settings;
+          msgLog('Settings loaded', json);
+          resolve(await upgradeSettings(json));
+        } else {
+          msgLog('No settings found, using default ones', defaultSettings);
+          resolve(defaultSettings);
+        }
+      } catch (e) {
+        msgWarn(
+          'Error parsing the settings, using default ones',
+          defaultSettings
+        );
         resolve(defaultSettings);
       }
     });

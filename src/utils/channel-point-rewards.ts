@@ -50,8 +50,11 @@ export async function setChannelPointRewards(
   const rewards = parseChannelPointRewards();
   if (!rewards) return;
 
-  rewards.forEach(({ name, checkbox }) => {
-    checkbox.checked = rewardNames.includes(name!);
+  rewards.forEach(({ id, checkbox }) => {
+    // only click it if it needs to change (XOR)
+    if ((checkbox.checked ? 1 : 0) ^ (rewardNames.includes(id) ? 1 : 0)) {
+      checkbox.click();
+    }
   });
 }
 

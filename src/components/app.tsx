@@ -10,10 +10,10 @@ import { TwitchDashboardTopButton } from './twitch/dashboard-top-button';
 import { msgLog } from '@src/utils/logging';
 import { getChannelPointRewards } from '@src/utils/channel-point-rewards';
 import { ChannelPointsRewards } from './channel-points-rewards';
-import { loadSettings } from '@src/utils/settings';
+import { loadState } from '@src/utils/settings';
 import { AppContext, ContextData } from './app-context';
 import { detectPage } from '@src/utils/detect-page';
-import { reducer, initialState, Action, State } from '@src/store';
+import { reducer, initialState } from '@src/store';
 
 interface ExtendedAppData extends ContextData {
   onClick: MouseEventHandler<HTMLDivElement>;
@@ -50,10 +50,10 @@ function useApp(): ExtendedAppData {
       subtree: true,
     });
 
-    loadSettings().then((settings) => {
+    loadState().then((storedState) => {
       dispatch({
         type: 'SET_CURRENT_REWARD_PROFILES',
-        profiles: settings.channelPointRewardProfiles,
+        profiles: storedState.channelPointsRewardsProfiles,
       });
     });
 

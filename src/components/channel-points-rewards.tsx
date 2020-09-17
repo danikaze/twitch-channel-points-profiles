@@ -7,13 +7,15 @@ import {
 import { ChannelPointRewardProfile } from './channel-point-reward-profile';
 import { msgLog } from '@src/utils/logging';
 import { TwitchButton } from './twitch/button';
-import { AppContext, ContextData } from './app-context';
+import { AppContext } from './app-context';
 import {
   addChanelPointRewardsListener,
   ChannelPointReward,
   getActiveRewardIds,
   removeChanelPointRewardsListener,
+  setChannelPointRewards,
 } from '@src/utils/channel-point-rewards';
+import { Action } from '@src/store/actions';
 
 export interface Props {
   currentRewards: ChannelPointReward[];
@@ -49,7 +51,9 @@ export const ChannelPointsRewards: FunctionComponent<Props> = (props) => {
     return removeChanelPointRewardsListener;
   }, []);
 
-  return <Portal container={getPortalContainer()}>{render(props)}</Portal>;
+  return (
+    <Portal container={getPortalContainer()}>{render(props, dispatch)}</Portal>
+  );
 };
 
 function getPortalContainer(): HTMLDivElement | null {
@@ -69,14 +73,15 @@ function getPortalContainer(): HTMLDivElement | null {
   return container;
 }
 
-function render({ currentRewards, rewardsProfiles }: Props): JSX.Element {
-  const activeRewardIds = getActiveRewardIds(currentRewards);
-
+function render(
+  { currentRewards, rewardsProfiles }: Props,
+  dispatch: React.Dispatch<Action>
+): JSX.Element {
   return (
     <TwitchSettingsRow title="Perfiles" noContainer={true}>
       {renderDescription()}
       {renderNewButton()}
-      {renderProfiles(rewardsProfiles, activeRewardIds)}
+      {renderProfiles(rewardsProfiles, currentRewards, dispatch)}
     </TwitchSettingsRow>
   );
 }
@@ -104,16 +109,39 @@ function renderNewButton(): JSX.Element {
 
 function renderProfiles(
   profiles: ChannelPointsRewardsProfile[],
-  activeRewardIds: string[]
+  currentRewards: ChannelPointReward[],
+  dispatch: React.Dispatch<Action>
 ): JSX.Element[] {
-  return profiles.map((profile, i) => {
-    const onDelete = (name: string) => msgLog(`delete ${name}`);
-    const onSelect = (name: string) => msgLog(`select ${name}`);
-    const onUpdate = (name: string) => msgLog(`update ${name}`);
+  const activeRewardIds = getActiveRewardIds(currentRewards);
 
+  const onDelete = (index: number) => {
+    dispatch({
+      index,
+      type: 'REMOVE_REWARD_PROFILE',
+    });
+  };
+
+  const onSelect = (index: number) => {
+    setChannelPointRewards(profiles[index].rewardIds);
+    dispatch({
+      type: 'SET_CURRENT_REWARDS',
+      rewards: currentRewards,
+    });
+  };
+
+  const onUpdate = (index: number) => {
+    dispatch({
+      index,
+      type: 'SET_REWARD_PROFILE_REWARDS',
+      rewardIds: activeRewardIds,
+    });
+  };
+
+  return profiles.map((profile, i) => {
     return (
       <ChannelPointRewardProfile
         key={i}
+        index={i}
         name={profile.name}
         active={isProfileActive(profile, activeRewardIds)}
         onDelete={onDelete}
