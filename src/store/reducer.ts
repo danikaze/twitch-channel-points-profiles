@@ -33,6 +33,7 @@ export function reducer(state: State, action: Action): State {
       channelPointsRewardsProfiles: [...state.channelPointsRewardsProfiles],
     };
     newState.channelPointsRewardsProfiles[action.index].name = action.name;
+    saveState(newState);
   }
 
   if (action.type === 'SET_REWARD_PROFILE_REWARDS') {

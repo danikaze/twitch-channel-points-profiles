@@ -10,6 +10,7 @@ export interface Props {
   onSelect: (index: number) => void;
   onDelete: (index: number) => void;
   onUpdate: (index: number) => void;
+  onRename: (index: number) => void;
 }
 
 export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
@@ -19,35 +20,40 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
   onSelect,
   onDelete,
   onUpdate,
+  onRename,
 }) => {
   const selectCallback = () => onSelect(index);
   const updateCallback = () => onUpdate(index);
   const deleteCallback = () => onDelete(index);
-  const deleteButton = (
-    <div className="tw-mg-l-1 tw-inline-flex">
+  const renameCallback = () => onRename(index);
+
+  // tslint:disable: jsx-wrap-multiline
+  const buttons = [
+    <div key="rename" className="tw-mg-l-1">
+      <TwitchButton type="secondary" onClick={renameCallback}>
+        Renombrar
+      </TwitchButton>
+    </div>,
+    <div key="delete" className="tw-mg-l-1 tw-inline-flex">
       <TwitchButton type="icon" onClick={deleteCallback}>
         <TwitchIcon type="trash" />
       </TwitchButton>
-    </div>
-  );
+    </div>,
+  ];
 
-  const actionButtons = active ? (
-    deleteButton
-  ) : (
-    <>
-      <div className="tw-flex tw-full-width tw-justify-content-end">
+  if (!active) {
+    buttons.unshift(
+      <TwitchButton key="select" type="primary" onClick={selectCallback}>
+        Activar
+      </TwitchButton>,
+      <div key="update" className="tw-mg-l-1">
         <TwitchButton type="secondary" onClick={updateCallback}>
           Actualizar
         </TwitchButton>
-        <div className="tw-mg-l-1">
-          <TwitchButton type="secondary" onClick={selectCallback}>
-            Activar
-          </TwitchButton>
-        </div>
-        {deleteButton}
       </div>
-    </>
-  );
+    );
+  }
+  // tslint:enable: jsx-wrap-multiline
 
   const divClasses = 'tw-align-items-center tw-flex tw-full-height tw-pd-05';
   const h5Styles: React.CSSProperties | undefined = active
@@ -57,7 +63,7 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
   return (
     <TwitchCard>
       <div className="tw-grid">
-        <div className="tw-col-8">
+        <div className="tw-col-6">
           <div className={divClasses}>
             <h5 className="tw-ellipsis" style={h5Styles}>
               {name}
@@ -65,10 +71,12 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
           </div>
         </div>
         <div
-          className="tw-col-4 tw-justify-content-end"
+          className="tw-col-6 tw-justify-content-end"
           style={{ textAlign: 'right' }}
         >
-          {actionButtons}
+          <div className="tw-flex tw-full-width tw-justify-content-end">
+            {buttons}
+          </div>
         </div>
       </div>
     </TwitchCard>

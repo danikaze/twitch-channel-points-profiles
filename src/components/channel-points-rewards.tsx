@@ -1,11 +1,15 @@
-import React, { FunctionComponent, useContext, useEffect } from 'react';
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { Portal } from '@material-ui/core';
 import {
   getSettingsRowContainer,
   TwitchSettingsRow,
 } from './twitch/settings-row';
 import { ChannelPointRewardProfile } from './channel-point-reward-profile';
-import { msgLog } from '@src/utils/logging';
 import { TwitchButton } from './twitch/button';
 import { AppContext } from './app-context';
 import {
@@ -16,6 +20,10 @@ import {
   setChannelPointRewards,
 } from '@src/utils/channel-point-rewards';
 import { Action } from '@src/store/actions';
+import {
+  ChannelPointRewardProfileModal,
+  Props as ModalProps,
+} from './channel-point-reward-profile-modal';
 
 export interface Props {
   currentRewards: ChannelPointReward[];
@@ -25,6 +33,12 @@ export interface Props {
 export interface ChannelPointsRewardsProfile {
   name: string;
   rewardIds: string[];
+}
+
+type ModalType = 'new' | 'edit' | undefined;
+interface EditingProfile {
+  index: number;
+  profile: ChannelPointsRewardsProfile;
 }
 
 function isProfileActive(
@@ -77,11 +91,34 @@ function render(
   { currentRewards, rewardsProfiles }: Props,
   dispatch: React.Dispatch<Action>
 ): JSX.Element {
+  const [modalType, setModalOpen] = useState<ModalType>();
+  const [editingProfile, setEditingProfile] = useState<
+    EditingProfile | undefined
+  >(); // tslint:disable-line: ter-func-call-spacing
+
+  const profileList = renderProfiles(
+    rewardsProfiles,
+    currentRewards,
+    dispatch,
+    setModalOpen,
+    setEditingProfile
+  );
+
+  const modal = renderModal(
+    modalType,
+    currentRewards,
+    editingProfile,
+    dispatch,
+    setModalOpen,
+    setEditingProfile
+  );
+
   return (
     <TwitchSettingsRow title="Perfiles" noContainer={true}>
       {renderDescription()}
-      {renderNewButton()}
-      {renderProfiles(rewardsProfiles, currentRewards, dispatch)}
+      {renderNewButton(setModalOpen)}
+      {profileList}
+      {modal}
     </TwitchSettingsRow>
   );
 }
@@ -95,12 +132,14 @@ function renderDescription(): JSX.Element {
   );
 }
 
-function renderNewButton(): JSX.Element {
-  const onClick = () => msgLog('new profile');
+function renderNewButton(setModalOpen: (type: ModalType) => void): JSX.Element {
+  const openDialog = () => {
+    setModalOpen('new');
+  };
 
   return (
     <div className="tw-pd-t-05">
-      <TwitchButton type="secondary" icon="add" onClick={onClick}>
+      <TwitchButton type="secondary" icon="add" onClick={openDialog}>
         Crear nuevo perfil con las recompensas activas actualmente
       </TwitchButton>
     </div>
@@ -110,7 +149,9 @@ function renderNewButton(): JSX.Element {
 function renderProfiles(
   profiles: ChannelPointsRewardsProfile[],
   currentRewards: ChannelPointReward[],
-  dispatch: React.Dispatch<Action>
+  dispatch: React.Dispatch<Action>,
+  setModalOpen: (type: ModalType) => void,
+  setEditingProfile: (profile: EditingProfile) => void
 ): JSX.Element[] {
   const activeRewardIds = getActiveRewardIds(currentRewards);
 
@@ -137,6 +178,14 @@ function renderProfiles(
     });
   };
 
+  const onRename = (index: number) => {
+    setModalOpen('edit');
+    setEditingProfile({
+      index,
+      profile: profiles[index],
+    });
+  };
+
   return profiles.map((profile, i) => {
     return (
       <ChannelPointRewardProfile
@@ -147,7 +196,76 @@ function renderProfiles(
         onDelete={onDelete}
         onSelect={onSelect}
         onUpdate={onUpdate}
+        onRename={onRename}
       />
     );
   });
+}
+
+function renderModal(
+  modalType: ModalType,
+  currentRewards: ChannelPointReward[],
+  editingProfile: EditingProfile | undefined,
+  dispatch: React.Dispatch<Action>,
+  setModalOpen: (type: ModalType) => void,
+  setEditingProfile: (profile: EditingProfile | undefined) => void
+): JSX.Element | undefined {
+  if (!modalType) return;
+
+  const closeModal = () => {
+    setModalOpen(undefined);
+    setEditingProfile(undefined);
+  };
+
+  const createNewProfile = (profileName: string) => {
+    setModalOpen(undefined);
+    if (!profileName) return;
+
+    const activeRewardIds = getActiveRewardIds(currentRewards);
+    dispatch({
+      type: 'ADD_REWARD_PROFILE',
+      name: profileName,
+      rewardIds: activeRewardIds,
+    });
+  };
+
+  if (modalType === 'new') {
+    return renderNewModal(createNewProfile, closeModal);
+  }
+  if (modalType === 'edit' && editingProfile) {
+    return renderEditModal(editingProfile, dispatch, setModalOpen, closeModal);
+  }
+}
+
+function renderNewModal(
+  onSave: ModalProps['onSave'],
+  onCancel: ModalProps['onCancel']
+): JSX.Element {
+  return <ChannelPointRewardProfileModal onSave={onSave} onCancel={onCancel} />;
+}
+
+function renderEditModal(
+  editingProfile: EditingProfile,
+  dispatch: React.Dispatch<Action>,
+  setModalOpen: (type: ModalType) => void,
+  onCancel: ModalProps['onCancel']
+): JSX.Element {
+  const updateProfile = (name: string) => {
+    setModalOpen(undefined);
+    if (!name) return;
+
+    dispatch({
+      name,
+      index: editingProfile!.index,
+      type: 'SET_REWARD_PROFILE_NAME',
+    });
+  };
+
+  return (
+    <ChannelPointRewardProfileModal
+      name={editingProfile.profile.name}
+      onSave={updateProfile}
+      onCancel={onCancel}
+    />
+  );
 }
