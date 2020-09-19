@@ -12,7 +12,7 @@ const locales: ResourceLanguage = {
     appSettingsSectionTitle: 'アプリ設定',
     appSettingsSectionDescription: 'この画面でアプリの設定を編集できます。',
     autoCollectTitle: 'ボーナスを自動獲得',
-    autoCollectDescription: 'クリックしせずにボーナスポイントを獲得できます。',
+    autoCollectDescription: 'クリックせずにボーナスポイントを獲得できます。',
     changelog: 'Change Log',
     cancelButton: 'キャンセル',
     saveButton: '保存',
@@ -20,7 +20,7 @@ const locales: ResourceLanguage = {
   channelPointRewards: {
     sectionTitle: '報酬プロファイル',
     description:
-      '報酬を簡単に変更できるように、こちらに報酬のプロファイルを作成や管理することができます。',
+      '報酬を簡単に変更できるよう、こちらで報酬プロファイルの作成や管理をできます',
     createNew: '新たな報酬プロファイルを追加',
     selectProfile: '使う',
     updateProfile: '更新',
