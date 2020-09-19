@@ -24,6 +24,7 @@ import {
   ChannelPointRewardProfileModal,
   Props as ModalProps,
 } from './channel-point-reward-profile-modal';
+import { useTranslation } from '@src/utils/i18n';
 
 export interface Props {
   currentRewards: ChannelPointReward[];
@@ -95,6 +96,7 @@ function render(
   const [editingProfile, setEditingProfile] = useState<
     EditingProfile | undefined
   >(); // tslint:disable-line: ter-func-call-spacing
+  const { t } = useTranslation('channelPointRewards');
 
   const profileList = renderProfiles(
     rewardsProfiles,
@@ -114,7 +116,7 @@ function render(
   );
 
   return (
-    <TwitchSettingsRow title="Perfiles" noContainer={true}>
+    <TwitchSettingsRow title={t('sectionTitle')} noContainer={true}>
       {renderDescription()}
       {renderNewButton(setModalOpen)}
       {profileList}
@@ -124,15 +126,13 @@ function render(
 }
 
 function renderDescription(): JSX.Element {
-  return (
-    <p className="tw-mg-b-05">
-      Aquí puedes activar grupo de recompensas fácilmente basado en perfiles que
-      puedes crear y gestionar.
-    </p>
-  );
+  const { t } = useTranslation('channelPointRewards');
+
+  return <p className="tw-mg-b-05">{t('description')}</p>;
 }
 
 function renderNewButton(setModalOpen: (type: ModalType) => void): JSX.Element {
+  const { t } = useTranslation('channelPointRewards');
   const openDialog = () => {
     setModalOpen('new');
   };
@@ -140,7 +140,7 @@ function renderNewButton(setModalOpen: (type: ModalType) => void): JSX.Element {
   return (
     <div className="tw-pd-t-05">
       <TwitchButton type="secondary" icon="add" onClick={openDialog}>
-        Crear nuevo perfil con las recompensas activas actualmente
+        {t('createNew')}
       </TwitchButton>
     </div>
   );

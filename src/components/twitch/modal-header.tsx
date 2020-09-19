@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { useTranslation } from '@src/utils/i18n';
 import { TwitchButton } from './button';
 import { TwitchIcon } from './icon';
 
@@ -10,6 +11,8 @@ export const TwitchModalHeader: FunctionComponent<Props> = ({
   children,
   onClose,
 }) => {
+  const { t } = useTranslation('twitch');
+
   return (
     <div className="tw-align-items-center tw-flex tw-modal-header tw-modal-header--md tw-pd-b-05 tw-pd-r-1 tw-pd-t-1 tw-relative">
       <div className="tw-flex-grow-1 tw-modal-header__title tw-modal-header__title--md tw-visible">
@@ -25,7 +28,7 @@ export const TwitchModalHeader: FunctionComponent<Props> = ({
           onClick={onClose}
           type="icon"
           size="small"
-          ariaLabel="Cerrar"
+          ariaLabel={t('modalCloseButtonAriaLabel')}
         >
           <TwitchIcon type="close" size="small" />
         </TwitchButton>

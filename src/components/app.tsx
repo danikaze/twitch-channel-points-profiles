@@ -14,6 +14,7 @@ import { loadState } from '@src/utils/settings';
 import { AppContext, ContextData } from './app-context';
 import { detectPage } from '@src/utils/detect-page';
 import { reducer, initialState } from '@src/store';
+import { detectLang } from '@src/utils/detect-lang';
 
 interface ExtendedAppData extends ContextData {
   onClick: MouseEventHandler<HTMLDivElement>;
@@ -23,12 +24,10 @@ function useApp(): ExtendedAppData {
   async function urlChangeHandler() {
     const page = detectPage();
     dispatch({ page, type: 'SET_CURRENT_PAGE' });
-    msgLog('currentPage', page);
 
     if (page === 'channel-point-rewards') {
       const rewards = await getChannelPointRewards();
       dispatch({ rewards, type: 'SET_CURRENT_REWARDS' });
-      msgLog('currentRewards', rewards);
     }
   }
 
@@ -36,8 +35,19 @@ function useApp(): ExtendedAppData {
 
   useEffect(() => {
     let oldhref = '';
+    let oldLang: string | undefined = undefined;
+
     const hrefObserver = new MutationObserver((mutations) => {
       mutations.forEach(() => {
+        const newLang = detectLang();
+        if (newLang && oldLang !== newLang) {
+          oldLang = newLang;
+          dispatch({
+            type: 'SET_LANG',
+            lang: newLang!,
+          });
+        }
+
         if (oldhref !== document.location.href) {
           oldhref = document.location.href;
           urlChangeHandler();

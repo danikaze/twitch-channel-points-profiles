@@ -3,6 +3,7 @@ import { ChannelPointReward } from '@src/utils/channel-point-rewards';
 import { PageType } from '@src/utils/detect-page';
 
 export type Action =
+  | SetLang
   | SetCurrentPage
   | SetCurrentRewardsAction
   | SetCurrentRewardsProfiles
@@ -13,6 +14,10 @@ export type Action =
 
 interface BaseAction<T extends string> {
   type: T;
+}
+
+export interface SetLang extends BaseAction<'SET_LANG'> {
+  lang: string;
 }
 
 export interface SetCurrentPage extends BaseAction<'SET_CURRENT_PAGE'> {

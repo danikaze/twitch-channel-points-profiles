@@ -1,4 +1,5 @@
 import React, { createRef, FunctionComponent, useState } from 'react';
+import { useTranslation } from '@src/utils/i18n';
 import { Props as TwitchButtonProps } from './twitch/button';
 import { TwitchModal } from './twitch/modal';
 import { TwitchModalContent } from './twitch/modal-content';
@@ -17,20 +18,19 @@ export const ChannelPointRewardProfileModal: FunctionComponent<Props> = ({
   onSave,
   onCancel,
 }) => {
+  const { t } = useTranslation('channelPointRewardsEditModal');
   const [isSaveDisabled, setSaveDisabled] = useState<boolean>(true);
   const nameRef = createRef<HTMLInputElement>();
-  const title = name
-    ? 'Editar perfil de recompensas'
-    : 'Nuevo perfil de recompensas';
+  const title = name ? t('newTitle') : t('editTitle');
 
   const saveHandler = () => {
     onSave(nameRef.current!.value);
   };
 
   const footerButtons: TwitchButtonProps[] = [
-    { children: 'Cancelar', type: 'secondary', onClick: onCancel },
+    { children: t('cancelButton'), type: 'secondary', onClick: onCancel },
     {
-      children: 'Guardar',
+      children: t('saveButton'),
       type: 'primary',
       disabled: isSaveDisabled,
       onClick: saveHandler,
@@ -47,8 +47,8 @@ export const ChannelPointRewardProfileModal: FunctionComponent<Props> = ({
       <TwitchModalHeader onClose={onCancel}>{title}</TwitchModalHeader>
       <TwitchModalContent>
         <TwitchTextInput
-          label="Profile name"
-          placeholder="Introduce un nombre para el perfil"
+          label={t('profileNameLabel')}
+          placeholder={t('profileNamePlaceholder')}
           defaultValue={name}
           inputRef={nameRef}
           autoFocus={true}

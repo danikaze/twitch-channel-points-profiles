@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { useTranslation } from '@src/utils/i18n';
 import { TwitchCard } from './twitch/card';
 import { TwitchButton } from './twitch/button';
 import { TwitchIcon } from './twitch/icon';
@@ -22,6 +23,7 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
   onUpdate,
   onRename,
 }) => {
+  const { t } = useTranslation('channelPointRewards');
   const selectCallback = () => onSelect(index);
   const updateCallback = () => onUpdate(index);
   const deleteCallback = () => onDelete(index);
@@ -29,9 +31,9 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
 
   // tslint:disable: jsx-wrap-multiline
   const buttons = [
-    <div key="rename" className="tw-mg-l-1">
+    <div key="edit" className="tw-mg-l-1">
       <TwitchButton type="secondary" onClick={renameCallback}>
-        Renombrar
+        {t('editProfile')}
       </TwitchButton>
     </div>,
     <div key="delete" className="tw-mg-l-1 tw-inline-flex">
@@ -44,11 +46,11 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
   if (!active) {
     buttons.unshift(
       <TwitchButton key="select" type="primary" onClick={selectCallback}>
-        Activar
+        {t('selectProfile')}
       </TwitchButton>,
       <div key="update" className="tw-mg-l-1">
         <TwitchButton type="secondary" onClick={updateCallback}>
-          Actualizar
+          {t('updateProfile')}
         </TwitchButton>
       </div>
     );
