@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "Twitch Channel Points Profiles",
-  "short_name": "Twitch CPP",
-  "description": "twitch-channel-points-profiles",
+  "name": "Twitch Profiles",
+  "short_name": "TwProfiles",
+  "description": "Easily switch between different profiles for channel points in the twitch control panel",
   "version": "AUTO_FILLED",
 
   "icons": {
@@ -15,7 +15,7 @@
   },
 
   "browser_action": {
-    "default_title": "Twitch Channel Points Profiles",
+    "default_title": "Twitch Profiles",
     "default_icon": "icons/icon128.png"
   },
 
