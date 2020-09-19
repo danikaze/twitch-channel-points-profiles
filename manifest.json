@@ -23,11 +23,11 @@
     {
       "js": ["app.js"],
       "run_at": "document_end",
-      "matches": ["https://dashboard.twitch.tv/*"]
+      "matches": ["https://*.twitch.tv/*"]
     }
   ],
 
-  "permissions": ["storage", "https://dashboard.twitch.tv/*"],
+  "permissions": ["storage", "https://*.twitch.tv/*"],
 
   "web_accessible_resources": ["img/*"]
 }

@@ -19,6 +19,8 @@ function getContainer(): HTMLDivElement | undefined {
 }
 
 (async function run() {
+  if (!location.href.includes('dashboard')) return;
+
   let container: HTMLDivElement | undefined;
   try {
     container = await waitUntil(getContainer);
