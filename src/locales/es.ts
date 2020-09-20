@@ -3,6 +3,8 @@ import { ResourceLanguage } from 'i18next';
 const locales: ResourceLanguage = {
   twitch: {
     modalCloseButtonAriaLabel: 'Cerrar',
+    modalConfirmationYes: 'Sí',
+    modalConfirmationNo: 'No',
   },
   channelPointRewards: {
     sectionTitle: 'Perfiles',
@@ -12,6 +14,9 @@ const locales: ResourceLanguage = {
     selectProfile: 'Activar',
     updateProfile: 'Actualizar',
     editProfile: 'Editar',
+    deleteConfirmationTitle: 'Eliminar Perfil',
+    deleteConfirmationMessage:
+      '¿Seguro que quieres eliminar el perfil {{profileName}}?',
   },
   channelPointRewardsEditModal: {
     newTitle: 'Nuevo Perfil de Recompensas',
