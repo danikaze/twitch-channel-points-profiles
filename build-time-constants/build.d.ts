@@ -3,6 +3,8 @@
  */
 /** Env constant set to (package.json).name */
 declare const PACKAGE_NAME: string;
+/** Env constant set to the MD string with the changelog from README.md */
+declare const CHANGELOG_MD: string;
 /** Env constant set to (package.json).version */
 declare const PACKAGE_VERSION: string;
 /** Env constant set to the git commit hash */

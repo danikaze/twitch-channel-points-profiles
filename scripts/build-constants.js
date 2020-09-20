@@ -3,7 +3,7 @@
  * This is used internally by the webpack configurations
  */
 const { join } = require('path');
-const { readdirSync } = require('fs');
+const { readdirSync, readFileSync } = require('fs');
 const { DefinePlugin } = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
@@ -44,6 +44,7 @@ function getConstants(IS_PRODUCTION) {
   return stringify({
     ...constants,
     IS_PRODUCTION,
+    CHANGELOG_MD: getChangelogMd(),
     PACKAGE_NAME: packageJson.name,
     PACKAGE_VERSION: packageJson.version,
     COMMIT_HASH: gitRevisionPlugin.commithash(),
@@ -56,4 +57,22 @@ function stringify(data) {
     res[key] = JSON.stringify(value);
     return res;
   }, {});
+}
+
+function getChangelogMd() {
+  const readmeMd = readFileSync(join(__dirname, '..', '/README.md')).toString();
+
+  const start = readmeMd.indexOf('## Change log');
+  const end = (() => {
+    let end = readmeMd.indexOf('\n## ', start + 1);
+    if (end === -1) {
+      end = readmeMd.indexOf('\n# ', start + 1);
+    }
+    if (end === -1) {
+      end = readmeMd.length;
+    }
+    return end;
+  })();
+
+  return readmeMd.substring(start, end);
 }
