@@ -6,7 +6,7 @@ export interface Props {
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   children?: ReactNode;
   fullWidth?: boolean;
-  type?: 'primary' | 'secondary' | 'icon';
+  type?: 'primary' | 'secondary' | 'icon' | 'destructive';
   icon?: IconType;
   ariaLabel?: string;
   size?: 'medium' | 'small';
@@ -47,6 +47,7 @@ export const TwitchButton: FunctionComponent<Props> = ({
     'tw-relative',
     'tw-core-button',
     `tw-core-button--${size}`,
+    type === 'destructive' && 'tw-core-button--destructive',
     disabled && 'tw-core-button--disabled',
     fullWidth && 'tw-full-width',
     type === 'primary' && 'tw-core-button tw-core-button--primary',

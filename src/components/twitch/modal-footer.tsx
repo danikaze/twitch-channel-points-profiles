@@ -5,6 +5,9 @@ export interface Props {
   buttons?: TwitchButtonProps[];
 }
 
+/**
+ * To be used inside `TwitchModal`
+ */
 export const TwitchModalFooter: FunctionComponent<Props> = ({ buttons }) => {
   const buttonElems =
     buttons &&

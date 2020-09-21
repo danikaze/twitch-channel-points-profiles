@@ -25,6 +25,8 @@ import {
   Props as ModalProps,
 } from './channel-point-reward-profile-modal';
 import { useTranslation } from '@src/utils/i18n';
+import { TwitchModalConfirmation } from './twitch/modal-confirmation';
+import { TFunction } from 'i18next';
 
 export interface Props {
   currentRewards: ChannelPointReward[];
@@ -36,7 +38,7 @@ export interface ChannelPointsRewardsProfile {
   rewardIds: string[];
 }
 
-type ModalType = 'new' | 'edit' | undefined;
+type ModalType = 'new' | 'edit' | 'delete' | undefined;
 interface EditingProfile {
   index: number;
   profile: ChannelPointsRewardsProfile;
@@ -156,9 +158,10 @@ function renderProfiles(
   const activeRewardIds = getActiveRewardIds(currentRewards);
 
   const onDelete = (index: number) => {
-    dispatch({
+    setModalOpen('delete');
+    setEditingProfile({
       index,
-      type: 'REMOVE_REWARD_PROFILE',
+      profile: profiles[index],
     });
   };
 
@@ -210,6 +213,7 @@ function renderModal(
   setModalOpen: (type: ModalType) => void,
   setEditingProfile: (profile: EditingProfile | undefined) => void
 ): JSX.Element | undefined {
+  const { t } = useTranslation('channelPointRewards');
   if (!modalType) return;
 
   const closeModal = () => {
@@ -233,7 +237,10 @@ function renderModal(
     return renderNewModal(createNewProfile, closeModal);
   }
   if (modalType === 'edit' && editingProfile) {
-    return renderEditModal(editingProfile, dispatch, setModalOpen, closeModal);
+    return renderEditModal(editingProfile, dispatch, closeModal);
+  }
+  if (modalType === 'delete' && editingProfile) {
+    return renderDeleteModal(t, editingProfile, dispatch, closeModal);
   }
 }
 
@@ -247,11 +254,10 @@ function renderNewModal(
 function renderEditModal(
   editingProfile: EditingProfile,
   dispatch: React.Dispatch<Action>,
-  setModalOpen: (type: ModalType) => void,
-  onCancel: ModalProps['onCancel']
+  closeModal: ModalProps['onCancel']
 ): JSX.Element {
   const updateProfile = (name: string) => {
-    setModalOpen(undefined);
+    closeModal();
     if (!name) return;
 
     dispatch({
@@ -265,7 +271,36 @@ function renderEditModal(
     <ChannelPointRewardProfileModal
       name={editingProfile.profile.name}
       onSave={updateProfile}
-      onCancel={onCancel}
+      onCancel={closeModal}
     />
+  );
+}
+
+function renderDeleteModal(
+  t: TFunction,
+  editingProfile: EditingProfile,
+  dispatch: React.Dispatch<Action>,
+  closeModal: ModalProps['onCancel']
+): JSX.Element {
+  const deleteProfile = () => {
+    closeModal();
+    dispatch({
+      index: editingProfile.index,
+      type: 'REMOVE_REWARD_PROFILE',
+    });
+  };
+
+  const message = t('deleteConfirmationMessage', {
+    profileName: editingProfile.profile.name,
+  });
+
+  return (
+    <TwitchModalConfirmation
+      title={t('deleteConfirmationTitle')}
+      onClose={closeModal}
+      onYes={deleteProfile}
+    >
+      {message}
+    </TwitchModalConfirmation>
   );
 }

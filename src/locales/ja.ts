@@ -2,7 +2,9 @@ import { ResourceLanguage } from 'i18next';
 
 const locales: ResourceLanguage = {
   twitch: {
-    modalCloseButtonAriaLabel: '閉じる',
+    modalCloseButtonAriaLabel: 'モーダルウィンドウを閉じる',
+    modalConfirmationYes: 'はい',
+    modalConfirmationNo: 'いいえ',
   },
   channelPointRewards: {
     sectionTitle: '報酬プロファイル',
@@ -12,6 +14,8 @@ const locales: ResourceLanguage = {
     selectProfile: '使う',
     updateProfile: '更新',
     editProfile: '編集',
+    deleteConfirmationTitle: 'プロファイルを削除',
+    deleteConfirmationMessage: 'この{{profileName}}を削除してもよろしいですか?',
   },
   channelPointRewardsEditModal: {
     newTitle: '新たな報酬プロファイル',

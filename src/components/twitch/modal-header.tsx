@@ -7,6 +7,9 @@ export interface Props {
   onClose: () => void;
 }
 
+/**
+ * To be used inside `TwitchModal`
+ */
 export const TwitchModalHeader: FunctionComponent<Props> = ({
   children,
   onClose,
