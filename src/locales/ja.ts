@@ -6,6 +6,16 @@ const locales: ResourceLanguage = {
     modalConfirmationYes: 'はい',
     modalConfirmationNo: 'いいえ',
   },
+  appSettings: {
+    modalTitle: 'Twitch Profiles',
+    closeButtonAria: '保存せずに閉じる',
+    appSettingsSectionTitle: 'アプリ設定',
+    appSettingsSectionDescription: 'この画面でアプリの設定を編集できます。',
+    autoCollectTitle: 'ボーナスを自動獲得',
+    autoCollectDescription: 'クリックしせずにボーナスポイントを獲得できます。',
+    cancelButton: 'キャンセル',
+    saveButton: '保存',
+  },
   channelPointRewards: {
     sectionTitle: '報酬プロファイル',
     description:

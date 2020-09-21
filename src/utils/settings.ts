@@ -1,13 +1,19 @@
 import { State } from '@src/store';
 import { msgLog, msgWarn } from './logging';
 
-export type StorableState = Pick<State, 'channelPointsRewardsProfiles'>;
+export type StorableState = Pick<
+  State,
+  'channelPointsRewardsProfiles' | 'appSettings'
+>;
 export interface Settings extends StorableState {
   version: string;
 }
 
 const defaultSettings: Settings = {
   version: PACKAGE_VERSION,
+  appSettings: {
+    autoCollectChannelPoints: true,
+  },
   channelPointsRewardsProfiles: [
     {
       name: 'Basic',
@@ -25,18 +31,18 @@ const defaultSettings: Settings = {
 export async function saveState(state: State): Promise<void> {
   const settings: Settings = {
     version: PACKAGE_VERSION,
+    appSettings: state.appSettings,
     channelPointsRewardsProfiles: state.channelPointsRewardsProfiles,
   };
 
   return saveSettings(settings);
 }
 
-export async function loadState(): Promise<
-  Pick<State, 'channelPointsRewardsProfiles'>
-> {
+export async function loadState(): Promise<StorableState> {
   const settings = await loadSettings();
 
   return {
+    appSettings: settings.appSettings,
     channelPointsRewardsProfiles: settings.channelPointsRewardsProfiles,
   };
 }
@@ -80,7 +86,9 @@ async function upgradeSettings(settings: Settings): Promise<Settings> {
   }
   msgLog(`Upgrading settings from ${settings.version} to ${PACKAGE_VERSION}`);
 
-  // needed updates here
+  if (settings.version === '1.0.0') {
+    settings.appSettings = defaultSettings.appSettings;
+  }
 
   // store update settings
   settings.version = PACKAGE_VERSION;

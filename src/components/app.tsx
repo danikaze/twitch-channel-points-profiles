@@ -3,11 +3,11 @@ import React, {
   useEffect,
   MouseEventHandler,
   useReducer,
+  useState,
 } from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import { theme } from '@themes/theme';
 import { TwitchDashboardTopButton } from './twitch/dashboard-top-button';
-import { msgLog } from '@src/utils/logging';
 import { getChannelPointRewards } from '@src/utils/channel-point-rewards';
 import { ChannelPointsRewards } from './channel-points-rewards';
 import { loadState } from '@src/utils/settings';
@@ -15,8 +15,11 @@ import { AppContext, ContextData } from './app-context';
 import { detectPage } from '@src/utils/detect-page';
 import { reducer, initialState } from '@src/store';
 import { detectLang } from '@src/utils/detect-lang';
+import { AppSettingsModal } from './app-settings-modal';
 
 interface ExtendedAppData extends ContextData {
+  isAppSettingsModalOpen: boolean;
+  closeSettingsModal: () => void;
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 
@@ -32,6 +35,10 @@ function useApp(): ExtendedAppData {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [isAppSettingsModalOpen, setAppSettingsModalOpen] = useState<boolean>(
+    false
+  );
+  const closeSettingsModal = () => setAppSettingsModalOpen(false);
 
   useEffect(() => {
     let oldhref = '';
@@ -62,6 +69,11 @@ function useApp(): ExtendedAppData {
 
     loadState().then((storedState) => {
       dispatch({
+        type: 'SET_APP_SETTINGS',
+        settings: storedState.appSettings,
+        save: false,
+      });
+      dispatch({
         type: 'SET_CURRENT_REWARD_PROFILES',
         profiles: storedState.channelPointsRewardsProfiles,
       });
@@ -75,33 +87,60 @@ function useApp(): ExtendedAppData {
   return {
     state,
     dispatch,
+    isAppSettingsModalOpen,
+    closeSettingsModal,
     onClick: () => {
-      msgLog('clicked');
+      setAppSettingsModalOpen(true);
     },
   };
 }
 
 export const App: FunctionComponent = () => {
-  const { onClick, ...contextData } = useApp();
+  const {
+    onClick,
+    isAppSettingsModalOpen,
+    closeSettingsModal,
+    ...contextData
+  } = useApp();
 
   return (
     <ThemeProvider theme={theme}>
       <AppContext.Provider value={contextData}>
         <TwitchDashboardTopButton onClick={onClick} />
-        <AppContext.Consumer>{getContents}</AppContext.Consumer>
+        <AppContext.Consumer>
+          {getContents(isAppSettingsModalOpen, closeSettingsModal)}
+        </AppContext.Consumer>
       </AppContext.Provider>
     </ThemeProvider>
   );
 };
 
-function getContents({ state }: ContextData) {
+const getContents = (
+  isAppSettingsModalOpen: boolean,
+  closeSettingsModal: () => void
+) => ({ state, dispatch }: ContextData): JSX.Element[] => {
+  const contents: JSX.Element[] = [];
+
+  if (isAppSettingsModalOpen) {
+    contents.push(
+      <AppSettingsModal
+        key="app-settings"
+        settings={state.appSettings}
+        dispatch={dispatch}
+        onClose={closeSettingsModal}
+      />
+    );
+  }
+
   if (state.currentPage === 'channel-point-rewards') {
-    return (
+    contents.push(
       <ChannelPointsRewards
+        key="page-contents"
         currentRewards={state.currentRewards}
         rewardsProfiles={state.channelPointsRewardsProfiles}
       />
     );
   }
-  return null;
-}
+
+  return contents;
+};
