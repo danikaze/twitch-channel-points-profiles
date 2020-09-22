@@ -16,6 +16,7 @@ import { detectPage } from '@src/utils/detect-page';
 import { reducer, initialState } from '@src/store';
 import { detectLang } from '@src/utils/detect-lang';
 import { AppSettingsModal } from './app-settings-modal';
+import { startAutoClaim, stopAutoClaim } from '@src/utils/auto-claim';
 
 interface ExtendedAppData extends ContextData {
   isAppSettingsModalOpen: boolean;
@@ -34,11 +35,26 @@ function useApp(): ExtendedAppData {
     }
   }
 
+  function checkAutoClaiming() {
+    if (!state) return;
+
+    if (
+      state.currentPage === 'view' &&
+      state.appSettings.autoCollectChannelPoints
+    ) {
+      startAutoClaim();
+    } else {
+      stopAutoClaim();
+    }
+  }
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isAppSettingsModalOpen, setAppSettingsModalOpen] = useState<boolean>(
     false
   );
   const closeSettingsModal = () => setAppSettingsModalOpen(false);
+
+  checkAutoClaiming();
 
   useEffect(() => {
     let oldhref = '';
@@ -81,6 +97,7 @@ function useApp(): ExtendedAppData {
 
     return () => {
       hrefObserver.disconnect();
+      stopAutoClaim();
     };
   }, []);
 
