@@ -1,4 +1,3 @@
-import { msgLog } from '@src/utils/logging';
 import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 
