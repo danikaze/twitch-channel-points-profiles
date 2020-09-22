@@ -1,10 +1,12 @@
 import { ChannelPointsRewardsProfile } from '@components/channel-points-rewards';
 import { ChannelPointReward } from '@src/utils/channel-point-rewards';
 import { PageType } from '@src/utils/detect-page';
+import { AppSettings } from './model';
 
 export type Action =
   | SetLang
   | SetCurrentPage
+  | SetAppSettings
   | SetCurrentRewardsAction
   | SetCurrentRewardsProfiles
   | SetOneRewardProfileName
@@ -22,6 +24,11 @@ export interface SetLang extends BaseAction<'SET_LANG'> {
 
 export interface SetCurrentPage extends BaseAction<'SET_CURRENT_PAGE'> {
   page: PageType;
+}
+
+export interface SetAppSettings extends BaseAction<'SET_APP_SETTINGS'> {
+  settings: AppSettings;
+  save: boolean;
 }
 
 export interface SetCurrentRewardsAction

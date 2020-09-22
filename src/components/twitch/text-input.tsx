@@ -1,4 +1,5 @@
 import React, { FunctionComponent, RefObject } from 'react';
+import { getRandomId } from '@src/utils/get-random-id';
 
 export interface Props {
   label?: string;
@@ -31,7 +32,7 @@ export const TwitchTextInput: FunctionComponent<Props> = ({
   autoFocus,
   onChange,
 }) => {
-  const inputId = String(Math.random()).substr(2);
+  const inputId = getRandomId();
 
   return (
     <div

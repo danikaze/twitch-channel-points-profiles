@@ -18,6 +18,14 @@ export function reducer(state: State, action: Action): State {
       ...state,
       currentPage: action.page,
     };
+  } else if (action.type === 'SET_APP_SETTINGS') {
+    newState = {
+      ...state,
+      appSettings: action.settings,
+    };
+    if (action.save) {
+      saveState(newState);
+    }
   } else if (action.type === 'SET_CURRENT_REWARDS') {
     newState = {
       ...state,

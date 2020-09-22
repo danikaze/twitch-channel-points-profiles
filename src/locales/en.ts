@@ -6,6 +6,19 @@ const locales: ResourceLanguage = {
     modalConfirmationYes: 'Yes',
     modalConfirmationNo: 'No',
   },
+  appSettings: {
+    modalTitle: 'Twitch Profiles',
+    closeButtonAria: 'Close',
+    appSettingsSectionTitle: 'App Settings',
+    appSettingsSectionDescription:
+      'In this screen you can change other global options for this plugin',
+    autoCollectTitle: 'Auto Claim Bonus',
+    autoCollectDescription:
+      'Claim bonus channel points when watching other streams automatically, without having to click anything',
+    changelog: 'Change Log',
+    cancelButton: 'Cancel',
+    saveButton: 'Save',
+  },
   channelPointRewards: {
     sectionTitle: 'Profiles',
     description:

@@ -6,6 +6,19 @@ const locales: ResourceLanguage = {
     modalConfirmationYes: 'Sí',
     modalConfirmationNo: 'No',
   },
+  appSettings: {
+    modalTitle: 'Twitch Profiles',
+    closeButtonAria: 'Cerrar',
+    appSettingsSectionTitle: 'Ajustes de la aplicación',
+    appSettingsSectionDescription:
+      'Aquí puedes cambiar otras opciones globales de este plugin',
+    autoCollectTitle: 'Auto Colección',
+    autoCollectDescription:
+      'Colecciona puntos de canal extra automáticamente cuando estés viendo otros streams',
+    changelog: 'Change Log',
+    cancelButton: 'Cancelar',
+    saveButton: 'Guardar',
+  },
   channelPointRewards: {
     sectionTitle: 'Perfiles',
     description:
