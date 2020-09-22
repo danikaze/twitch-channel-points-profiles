@@ -15,6 +15,7 @@ const locales: ResourceLanguage = {
     autoCollectTitle: 'Auto Claim Bonus',
     autoCollectDescription:
       'Claim bonus channel points when watching other streams automatically, without having to click anything',
+    changelog: 'Change Log',
     cancelButton: 'Cancel',
     saveButton: 'Save',
   },

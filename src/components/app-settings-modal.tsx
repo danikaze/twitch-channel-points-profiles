@@ -14,6 +14,7 @@ import {
 import { TwitchToggle } from './twitch/toggle';
 import { TwitchSection } from './twitch/section';
 import { TwitchSectionRow } from './twitch/section-row';
+import { Changelog } from './changelog';
 
 export interface Props {
   settings: AppSettings;
@@ -103,10 +104,13 @@ export const AppSettingsModal: FunctionComponent<Props> = (props) => {
           >
             <TwitchToggle
               active={currentSettings.autoCollectChannelPoints}
+              // tslint:disable-next-line:react-this-binding-issue
               onChange={boolChange.bind(undefined, 'autoCollectChannelPoints')}
             />
           </TwitchSectionRow>
         </TwitchSection>
+
+        <Changelog />
       </TwitchModalContent>
       <TwitchModalFooter buttons={footerButtons} />
     </TwitchModal>

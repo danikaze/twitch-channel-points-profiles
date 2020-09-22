@@ -13,6 +13,7 @@ const locales: ResourceLanguage = {
     appSettingsSectionDescription: 'この画面でアプリの設定を編集できます。',
     autoCollectTitle: 'ボーナスを自動獲得',
     autoCollectDescription: 'クリックしせずにボーナスポイントを獲得できます。',
+    changelog: 'Change Log',
     cancelButton: 'キャンセル',
     saveButton: '保存',
   },

@@ -9,8 +9,9 @@ This plugins autodetect the language of your twitch page and shows the features 
 ### 1.1.0
 
 - Show a dialog to ask for confirmation before deleting a profile
-- Improvement in Japanese translations
 - Display a global-app settings dialog when clicking in the icon in the top
+- Display the change log in the global-app settings dialog as well
+- Improvement in Japanese translations
 
 ### 1.0.0
 

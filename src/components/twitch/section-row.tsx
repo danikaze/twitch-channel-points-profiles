@@ -1,4 +1,3 @@
-import { getRandomId } from '@src/utils/get-random-id';
 import React, { FunctionComponent } from 'react';
 
 export interface Props {
@@ -11,14 +10,15 @@ export const TwitchSectionRow: FunctionComponent<Props> = ({
   children,
   description,
 }) => {
-  const id = getRandomId();
+  const cl1 = 'tw-flex-grow-1 tw-font-size-6 tw-form-group tw-relative';
+  const cl2 = 'tw-flex-shrink-0 tw-form-group__label-container tw-pd-r-2';
 
   return (
     <div className="settings-row tw-full-width tw-pd-0">
       <div className="settings-row tw-full-width tw-pd-2">
-        <div className="tw-flex-grow-1 tw-font-size-6 tw-form-group tw-relative">
+        <div className={cl1}>
           <div className="tw-flex tw-flex-nowrap">
-            <div className="tw-flex-shrink-0 tw-form-group__label-container tw-pd-r-2">
+            <div className={cl2}>
               <div className="tw-mg-b-05">
                 <label
                   className="tw-form-label"

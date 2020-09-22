@@ -100,7 +100,7 @@ export const App: FunctionComponent = () => {
     onClick,
     isAppSettingsModalOpen,
     closeSettingsModal,
-    ...contextData
+    ...contextData // tslint:disable-line:trailing-comma
   } = useApp();
 
   return (

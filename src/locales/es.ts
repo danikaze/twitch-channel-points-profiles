@@ -15,6 +15,7 @@ const locales: ResourceLanguage = {
     autoCollectTitle: 'Auto Colección',
     autoCollectDescription:
       'Colecciona puntos de canal extra automáticamente cuando estés viendo otros streams',
+    changelog: 'Change Log',
     cancelButton: 'Cancelar',
     saveButton: 'Guardar',
   },
