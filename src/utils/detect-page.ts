@@ -1,12 +1,13 @@
-export type PageType = 'channel-point-rewards' | undefined;
+export type PageType = 'channel-point-rewards' | 'view' | undefined;
 
-export function detectPage() {
+export function detectPage(): PageType {
   const pathname = location.pathname;
-  let page: PageType = undefined;
 
   if (/community\/channel-points\/rewards$/.test(pathname)) {
-    page = 'channel-point-rewards';
+    return 'channel-point-rewards';
   }
 
-  return page;
+  if (/^\/[^/]+$/.test(pathname)) {
+    return 'view';
+  }
 }
