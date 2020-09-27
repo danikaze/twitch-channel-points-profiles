@@ -6,8 +6,14 @@ import { waitUntil } from './utils/wait-until';
 
 function getContainer(): HTMLDivElement | undefined {
   try {
-    const parent = document.querySelector('.resize-detector')!.parentElement!
-      .parentElement!;
+    let parent: HTMLElement;
+    if (/dashboard/.test(location.host)) {
+      parent = document.querySelector('.resize-detector')!.parentElement!
+        .parentElement!;
+    } else {
+      parent = document.querySelector('.top-nav__menu')!
+        .children[2]! as HTMLElement;
+    }
     const container = document.createElement('div');
     container.id = PACKAGE_NAME;
     container.className =
