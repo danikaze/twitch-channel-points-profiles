@@ -14,6 +14,11 @@ Since it's related with channel points, it will also auto claim bonus channel po
 
 ## Change log
 
+### 1.1.1
+
+- Fixed twitch styles
+- Added shortcut link to access Profile Rewards from the extension info/settings
+
 ### 1.1.0
 
 - Show a dialog to ask for confirmation before deleting a profile
