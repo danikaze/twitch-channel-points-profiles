@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "twitch-profiles",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Easily switch between different profiles for channel points in the twitch control panel",
   "scripts": {
     "dev": "webpack --config webpack.config.js --env=development",
