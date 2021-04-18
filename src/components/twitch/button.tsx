@@ -1,5 +1,6 @@
 import React, { FunctionComponent, ReactNode } from 'react';
 import clsx from 'clsx';
+import { makeStyles } from '@src/utils/styles';
 import { IconType, TwitchIcon } from './icon';
 
 export interface Props {
@@ -13,16 +14,37 @@ export interface Props {
   disabled?: boolean;
 }
 
+const useStyles = makeStyles({
+  destructive: {
+    display: 'inline-flex',
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    verticalAlign: 'middle',
+    overflow: 'hidden',
+    textDecoration: 'none',
+    whiteSpace: 'nowrap',
+    userSelect: 'none',
+    width: '100%',
+    fontWeight: 600, // 'var(--font-weight-semibold)',
+    borderRadius: 'var(--border-radius-medium)',
+    fontSize: 'var(--button-text-default)',
+    height: 'var(--button-size-default)',
+    backgroundColor: 'var(--color-background-button-destructive-default)',
+    color: 'var(--color-text-button-destructive)',
+  },
+});
+
 export const TwitchButton: FunctionComponent<Props> = ({
   children,
   onClick,
-  fullWidth,
   type,
   icon,
   ariaLabel,
   size,
   disabled,
 }) => {
+  const styles = useStyles();
   const onClickHandler = (
     ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -34,29 +56,32 @@ export const TwitchButton: FunctionComponent<Props> = ({
   };
 
   const buttonClasses = clsx([
-    size === 'medium' && ['tw-align-items-center', 'tw-align-middle'],
-    `tw-border-bottom-left-radius-${size}`,
-    `tw-border-bottom-right-radius-${size}`,
-    `tw-border-top-left-radius-${size}`,
-    `tw-border-top-right-radius-${size}`,
-    'tw-inline-flex',
+    // size === 'medium' && ['tw-align-items-center', 'tw-align-middle'],
+    `ScCoreButton-sc-1qn4ixc-0`,
+    // `tw-border-bottom-left-radius-${size}`,
+    // `tw-border-bottom-right-radius-${size}`,
+    // `tw-border-top-left-radius-${size}`,
+    // `tw-border-top-right-radius-${size}`,
+    // 'tw-inline-flex',
     type === 'icon' && ['tw-button-icon', `tw-button-icon--${size}`],
-    'tw-interactive',
-    'tw-justify-content-center',
-    'tw-overflow-hidden',
-    'tw-relative',
+    // 'tw-interactive',
+    // 'tw-justify-content-center',
+    // 'tw-overflow-hidden',
+    // 'tw-relative',
     'tw-core-button',
-    `tw-core-button--${size}`,
-    type === 'destructive' && 'tw-core-button--destructive',
-    disabled && 'tw-core-button--disabled',
-    fullWidth && 'tw-full-width',
-    type === 'primary' && 'tw-core-button tw-core-button--primary',
-    type === 'secondary' && 'tw-core-button tw-core-button--secondary',
+    // `tw-core-button--${size}`,
+    // disabled && 'tw-core-button--disabled',
+    type === 'primary' &&
+      'tw-core-button ScCoreButtonPrimary-sc-1qn4ixc-1 jeBpig',
+    type === 'secondary' &&
+      'tw-core-button ScCoreButtonSecondary-sc-1qn4ixc-2 kMLrvA',
+    type === 'destructive' &&
+      `${styles.destructive} ScCoreButtonDestructive-sc-1qn4ixc-4 hHDQZJ`,
   ]);
 
   const iconElem =
     type === 'icon' || !icon ? null : (
-      <div className="tw-mg-r-05 tw-inline-flex tw-align-items-center">
+      <div className="tw-align-items-center tw-flex tw-mg-r-05">
         <TwitchIcon type={icon} size={size} />
       </div>
     );
@@ -65,7 +90,9 @@ export const TwitchButton: FunctionComponent<Props> = ({
     type === 'icon' ? (
       <IconLayout size={size}>{children}</IconLayout>
     ) : (
-      <div className="tw-flex-grow-0">{children}</div>
+      <div className="tw-align-items-center tw-flex tw-flex-grow-0 tw-justify-content-start">
+        {children}
+      </div>
     );
 
   return (
@@ -91,16 +118,15 @@ TwitchButton.defaultProps = {
 
 const ContentLayout: FunctionComponent<Pick<
   Props,
-  'icon' | 'size' | 'children'
->> = ({ size, children, icon }) => {
+  'icon' | 'size' | 'children' | 'type'
+>> = ({ size, children, icon, type }) => {
   if (size === 'small') return <>{children}</>;
 
   const classes = clsx([
-    'tw-align-items-center',
+    'ScCoreButtonLabel-lh1yxp-0',
+    type === 'destructive' ? 'xsINH' : 'bUTtZU',
     'tw-core-button-label',
     icon && 'button-label--icon',
-    'tw-flex',
-    'tw-flex-grow-0',
   ]);
 
   return <div className={classes}>{children}</div>;

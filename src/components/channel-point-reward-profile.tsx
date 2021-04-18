@@ -3,6 +3,7 @@ import { useTranslation } from '@src/utils/i18n';
 import { TwitchCard } from './twitch/card';
 import { TwitchButton } from './twitch/button';
 import { TwitchIcon } from './twitch/icon';
+import { makeStyles } from '@src/utils/styles';
 
 export interface Props {
   index: number;
@@ -14,6 +15,17 @@ export interface Props {
   onRename: (index: number) => void;
 }
 
+const useStyles = makeStyles({
+  name: {
+    display: 'flex',
+    flex: `0 0 58.3333%`,
+  },
+  actions: {
+    display: 'flex',
+    flex: `0 0 41.6667%`,
+  },
+});
+
 export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
   index,
   name,
@@ -23,6 +35,7 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
   onUpdate,
   onRename,
 }) => {
+  const styles = useStyles();
   const { t } = useTranslation('channelPointRewards');
   const selectCallback = () => onSelect(index);
   const updateCallback = () => onUpdate(index);
@@ -45,9 +58,11 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
 
   if (!active) {
     buttons.unshift(
-      <TwitchButton key="select" type="primary" onClick={selectCallback}>
-        {t('selectProfile')}
-      </TwitchButton>,
+      <div key="select">
+        <TwitchButton type="primary" onClick={selectCallback}>
+          {t('selectProfile')}
+        </TwitchButton>
+      </div>,
       <div key="update" className="tw-mg-l-1">
         <TwitchButton type="secondary" onClick={updateCallback}>
           {t('updateProfile')}
@@ -57,26 +72,27 @@ export const ChannelPointRewardProfile: FunctionComponent<Props> = ({
   }
   // tslint:enable: jsx-wrap-multiline
 
-  const divClasses = 'tw-align-items-center tw-flex tw-full-height tw-pd-05';
+  const nameContainerClasses =
+    'tw-align-items-center tw-flex tw-full-height tw-mg-r-1 tw-pd-05';
   const h5Styles: React.CSSProperties | undefined = active
     ? { fontWeight: 'bold' }
     : undefined;
 
   return (
     <TwitchCard>
-      <div className="tw-grid">
-        <div className="tw-col-6">
-          <div className={divClasses}>
+      <div className="ScGrid-zg6pp6-0 eeuESu tw-grid">
+        <div className={`ScColumn-tzah5l-0 tw-col ${styles.name}`}>
+          <div className={nameContainerClasses}>
             <h5 className="tw-ellipsis" style={h5Styles}>
               {name}
             </h5>
           </div>
         </div>
         <div
-          className="tw-col-6 tw-justify-content-end"
+          className={`tw-col-6 tw-justify-content-end ${styles.actions}`}
           style={{ textAlign: 'right' }}
         >
-          <div className="tw-flex tw-full-width tw-justify-content-end">
+          <div className="jYDmYT tw-flex tw-full-width tw-justify-content-end tw-pd-05">
             {buttons}
           </div>
         </div>

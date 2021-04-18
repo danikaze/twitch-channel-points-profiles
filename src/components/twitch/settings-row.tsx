@@ -24,9 +24,11 @@ export const TwitchSettingsRow: FunctionComponent<TwitchSettingsRowProps> = ({
   const content = (
     <div className="tw-flex-grow-1 tw-font-size-6 tw-form-group tw-relative">
       <div className="tw-flex tw-flex-nowrap">
-        <div className="tw-flex-shrink-0 tw-form-group__label-container tw-pd-r-2">
+        <div className="ScFormGroupLabel-sc-18zen7a-0 jTtlBn tw-flex-shrink-0 tw-form-group__label-container tw-pd-r-2">
           <div className="tw-mg-b-05">
-            <label className="tw-form-label">{title}</label>
+            <label className="ScFormLabel-sc-1oiqww5-0 glvLeV tw-form-label">
+              {title}
+            </label>
           </div>
         </div>
         <div className="tw-flex-grow-1">{children}</div>
