@@ -7,6 +7,7 @@ const locales: ResourceLanguage = {
     modalConfirmationNo: 'No',
   },
   appSettings: {
+    rewardsShortcutLink: 'Ir a la página de recompensas',
     modalTitle: 'Twitch Profiles',
     closeButtonAria: 'Cerrar',
     appSettingsSectionTitle: 'Ajustes de la aplicación',
