@@ -15,6 +15,7 @@ import { TwitchToggle } from './twitch/toggle';
 import { TwitchSection } from './twitch/section';
 import { TwitchSectionRow } from './twitch/section-row';
 import { Changelog } from './changelog';
+import { getRewardsUrl } from '@src/utils/urls';
 
 export interface Props {
   settings: AppSettings;
@@ -82,10 +83,25 @@ export const AppSettingsModal: FunctionComponent<Props> = (props) => {
     },
   ];
 
+  const rewardsShortcutUrl = getRewardsUrl();
+  const rewardsShortcutLinkElem = rewardsShortcutUrl && (
+    <div className="tw-mg-b-2">
+      <div>
+        <a href={rewardsShortcutUrl}>{t('rewardsShortcutLink')}</a>
+      </div>
+    </div>
+  );
+
   return (
     <TwitchModal onClose={onClose}>
+      {/* Dialog title */}
       <TwitchModalHeader onClose={onClose}>{t('modalTitle')}</TwitchModalHeader>
+
+      {/* App Settings */}
       <TwitchModalContent>
+        {rewardsShortcutLinkElem}
+
+        {/* Channel Points Rewards */}
         <div className="tw-mg-b-2">
           <h3 className="tw-c-text-alt tw-font-size-4 tw-strong">
             {t('appSettingsSectionTitle')}
@@ -97,6 +113,7 @@ export const AppSettingsModal: FunctionComponent<Props> = (props) => {
           </div>
         </div>
 
+        {/* Auto Claim Bonus */}
         <TwitchSection>
           <TwitchSectionRow
             title={t('autoCollectTitle')}
@@ -110,6 +127,7 @@ export const AppSettingsModal: FunctionComponent<Props> = (props) => {
           </TwitchSectionRow>
         </TwitchSection>
 
+        {/* Change Log */}
         <Changelog />
       </TwitchModalContent>
       <TwitchModalFooter buttons={footerButtons} />
